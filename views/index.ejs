@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Page</title>
+  </head>
+  <body>
+    <h1>Welcome to our store!</h1>
+    <button id="buyButton">Buy Now</button>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+      document
+        .getElementById("buyButton")
+        .addEventListener("click", async function () {
+          try {
+            const response = await fetch("/api/payment", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                paymentData: {
+                  amount: 1000, // Add the amount here (in paise, e.g., 1000 paise = ₹10)
+                  currency: "INR",
+                  receipt: "receipt_order_" + Date.now(), // Unique receipt ID
+                },
+              }),
+            });
+            const data = await response.json();
+            if (data.id) {
+              const options = {
+                key: "rzp_test_5UMsWt7fVglSw5",
+                amount: data.amount,
+                currency: data.currency,
+                order_id: data.id,
+                name: "CCC",
+                description: "Product description",
+                handler: function (response) {
+                  // Handle success callback
+                  alert("Payment successful!");
+                  // Trigger the webhook event for successful payment
+                  triggerWebhookEvent("success", response);
+                },
+              };
+              const rzp = new Razorpay(options);
+              rzp.open();
+            } else {
+              alert("Payment failed!");
+            }
+          } catch (error) {
+            console.error(error);
+            alert("Payment failed!");
+          }
+        });
+      async function triggerWebhookEvent(type, payload) {
+        try {
+          const response = await fetch(`/payment/${type}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              event: `payment.${type}`,
+              payload: payload,
+            }),
+          });
+          const data = await response.json();
+          console.log(data); // Log the response from the server
+        } catch (error) {
+          console.error("Error triggering webhook event:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

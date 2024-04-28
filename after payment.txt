@@ -1,0 +1,7 @@
+after payment 
+save database order_id and id 
+
+webhook 
+fetch order id based on razorpay-orderid matching with id u have saved
+
+genrate token using orderId and razor signaure 
