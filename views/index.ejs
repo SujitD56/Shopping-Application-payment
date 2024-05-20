@@ -14,6 +14,15 @@
         .getElementById("buyButton")
         .addEventListener("click", async function () {
           try {
+            let totalamount = await fetch("/getOrderAmount", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ userId: "664451e87f2567b80581e815" }),
+            });
+            totalamount = await totalamount.json();
+
             const response = await fetch("/api/payment", {
               method: "POST",
               headers: {
@@ -21,7 +30,7 @@
               },
               body: JSON.stringify({
                 paymentData: {
-                  amount: 1000, // Add the amount here (in paise, e.g., 1000 paise = ₹10)
+                  amount: totalamount.totalAmount * 100, // Add the amount here (in paise, e.g., 1000 paise = ₹10)
                   currency: "INR",
                   receipt: "receipt_order_" + Date.now(), // Unique receipt ID
                 },
@@ -34,10 +43,11 @@
                 amount: data.amount,
                 currency: data.currency,
                 order_id: data.id,
-                name: "CCC",
+                name: "CW",
                 description: "Product description",
                 handler: function (response) {
-                  // Handle success callback
+                  alert("payment captured!");
+                  alert("order paid!");
                   alert("Payment successful!");
                   // Trigger the webhook event for successful payment
                   triggerWebhookEvent("success", response);

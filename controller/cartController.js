@@ -1,4 +1,5 @@
 const CartService = require("../service/cartservice");
+
 exports.addToCart = async (req, res) => {
   try {
     const { customerId, productId } = req.body;
@@ -31,5 +32,17 @@ exports.createOrder = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.getOrderAmount = async (req, res) => {
+  try {
+    const userId = req.body.userId; // Assuming user ID is sent in the request body
+    console.log(userId);
+    const orderDetails = await CartService.getOrderDetails(userId);
+    res.status(200).json(orderDetails);
+  } catch (error) {
+    console.error("Error retrieving order details:", error);
+    res.status(500).json({ message: "Failed to retrieve order details" });
   }
 };

@@ -1,6 +1,7 @@
 const Customer = require("../module/customer");
 const Cart = require("../module/cartmodule");
 const Order = require("../module/order");
+
 exports.addToCart = async (customerId, productId) => {
   try {
     const customer = await Customer.findById(customerId);
@@ -47,48 +48,6 @@ exports.listCartItems = async (customerId) => {
     throw new Error("Failed to retrieve cart items");
   }
 };
-
-// exports.createOrder = async (cartId) => {
-//     try {
-//         const cart = await Cart.findOne({ _id: cartId });
-//         console.log("Retrieved cart:", cart);
-
-//         if (!cart) {
-//             throw new Error('Cart not found');
-//         }
-
-//         const newOrder = new Order({
-//             cartId: cart._id,
-//             customerId: cart.customerId,
-//             products: cart.products
-//         });
-
-//         const savedOrder = await newOrder.save();
-//         console.log("Saved order:", savedOrder);
-
-//         return savedOrder._id;
-//     } catch (error) {
-//         console.error("Error creating order:", error.message);
-//         throw new Error('Error creating order');
-//     }
-// };
-
-// exports.getOrderDetails = async (orderId) => {
-//   try {
-//       const order = await Order.findOne(orderId).populate('products');
-//       console.log(order);
-//       if (!order) {
-//           throw new Error('Order not found');
-//       }
-
-//       return order.products;
-//   } catch (error) {
-//       throw new Error('Error fetching order details');
-//   }
-// };
-// CartService.js
-
-// const Order = require('./OrderModule');
 
 exports.createOrder = async (cartId) => {
   try {
@@ -146,3 +105,26 @@ exports.createOrder = async (cartId) => {
     throw new Error("Error creating order");
   }
 };
+
+exports.getOrderDetails = async (userId) => {
+  try {
+    const order = await Order.findOne({ customerId: userId }).populate(
+      "products"
+    );
+    if (!order) {
+      throw new Error("Order not found for the user");
+    }
+    const totalAmount = calculateTotalAmount(order.products); // Calculate total amount from order items
+    return { totalAmount, purchasedItems: order.products };
+  } catch (error) {
+    throw new Error("Error retrieving order details: " + error.message);
+  }
+};
+
+function calculateTotalAmount(orderProducts) {
+  let total = 0;
+  for (const product of orderProducts) {
+    total += product.price; 
+  }
+  return total;
+}

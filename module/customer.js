@@ -12,7 +12,7 @@ const customerSchema = mongoose.Schema({
   purchasedproducts: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "product",
+      ref: "products",
     },
   ],
 });

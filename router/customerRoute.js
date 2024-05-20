@@ -4,7 +4,7 @@ const customerControllers = require("../controller/customerController");
 const productControllers = require("../controller/productController");
 const purchaseControllers = require("../controller/purchaseController");
 const cartController = require("../controller/cartController");
-// const paymentController = require("../controller/paymentController");
+const { handlePayment, handleWebhook } = require("../payment/webhookhandler");
 
 router.post("/customers", customerControllers.createCustomer);
 
@@ -21,5 +21,12 @@ router.get("/cart-items", cartController.listCartItems);
 
 router.post("/create-order", cartController.createOrder);
 
-// router.get("/", paymentController.handleWebhook);
+router.use("/getOrderAmount", cartController.getOrderAmount);
+
+router.post("/api/payment", handlePayment);
+
+router.post("/payment/success", handleWebhook("success"));
+
+router.post("/payment/failed", handleWebhook("failed"));
+
 module.exports = router;
