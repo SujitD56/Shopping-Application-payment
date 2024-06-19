@@ -25,8 +25,8 @@ router.use("/getOrderAmount", cartController.getOrderAmount);
 
 router.post("/api/payment", handlePayment);
 
-router.post("/payment/success", handleWebhook("success"));
+router.post("/payment/success", handleWebhook);
 
-router.post("/payment/failed", handleWebhook("failed"));
+router.post("/payment/failed", handleWebhook);
 
 module.exports = router;

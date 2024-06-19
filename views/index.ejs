@@ -19,7 +19,7 @@
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ userId: "664451e87f2567b80581e815" }),
+              body: JSON.stringify({ userId: "6602967613476df929f826d5" }),
             });
             totalamount = await totalamount.json();
 
@@ -30,7 +30,7 @@
               },
               body: JSON.stringify({
                 paymentData: {
-                  amount: totalamount.totalAmount * 100, // Add the amount here (in paise, e.g., 1000 paise = ₹10)
+                  amount: totalamount.totalAmountInpiesa, // Add the amount here (in paise, e.g., 1000 paise = ₹10)
                   currency: "INR",
                   receipt: "receipt_order_" + Date.now(), // Unique receipt ID
                 },

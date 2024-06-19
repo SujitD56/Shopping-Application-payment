@@ -94,7 +94,6 @@ exports.createOrder = async (cartId) => {
       cartId: savedOrder.cartId,
       customerId: savedOrder.customerId,
       products: savedOrder.products,
-
       totalAmount: savedOrder.totalAmount,
     };
 
@@ -114,8 +113,9 @@ exports.getOrderDetails = async (userId) => {
     if (!order) {
       throw new Error("Order not found for the user");
     }
-    const totalAmount = calculateTotalAmount(order.products); // Calculate total amount from order items
-    return { totalAmount, purchasedItems: order.products };
+    const totalAmount = calculateTotalAmount(order.products);
+    const totalAmountInpiesa = totalAmount * 100; // Calculate total amount from order items
+    return { totalAmountInpiesa, purchasedItems: order.products };
   } catch (error) {
     throw new Error("Error retrieving order details: " + error.message);
   }
@@ -124,7 +124,7 @@ exports.getOrderDetails = async (userId) => {
 function calculateTotalAmount(orderProducts) {
   let total = 0;
   for (const product of orderProducts) {
-    total += product.price; 
+    total += product.price;
   }
   return total;
 }
